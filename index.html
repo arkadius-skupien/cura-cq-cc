@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CQ — Regulatorische Dokumentation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, 'Segoe UI', sans-serif;
+      background: #f4f5f7;
+      color: #172b4d;
+      font-size: 13px;
+    }
+
+    /* ── Top Bar ─────────────────────────────────────── */
+    .topbar {
+      background: #0052cc;
+      color: #fff;
+      padding: 0 20px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .cq-logo {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+    .cq-logo span { color: #4c9aff; }
+    .topbar-breadcrumb {
+      font-size: 11px;
+      color: #b3d4ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .topbar-breadcrumb a { color: #b3d4ff; text-decoration: none; }
+    .topbar-breadcrumb a:hover { color: #fff; }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      color: #b3d4ff;
+    }
+    .btn-cq {
+      background: #fff;
+      color: #0052cc;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-cq:hover { background: #e8f0fe; }
+
+    /* ── Doc Header ──────────────────────────────────── */
+    .doc-header {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      padding: 16px 20px;
+    }
+    .doc-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .doc-type-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: #0052cc;
+      background: #e8f0fe;
+      padding: 3px 8px;
+      border-radius: 3px;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+    .doc-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #172b4d;
+      margin-bottom: 4px;
+    }
+    .doc-subtitle {
+      font-size: 12px;
+      color: #6b778c;
+    }
+    .doc-meta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .meta-item { }
+    .meta-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #6b778c;
+      margin-bottom: 2px;
+    }
+    .meta-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: #172b4d;
+    }
+
+    /* ── Status Row ──────────────────────────────────── */
+    .status-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .pill-approved { background: #e3fcef; color: #006644; }
+    .pill-pending  { background: #fffae6; color: #974f0c; }
+    .pill-locked   { background: #fdecea; color: #ae1400; }
+    .pill-info     { background: #e8f0fe; color: #0052cc; }
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Tabs ────────────────────────────────────────── */
+    .tab-row {
+      background: #fff;
+      border-bottom: 2px solid #dfe1e6;
+      padding: 0 20px;
+      display: flex;
+      gap: 0;
+      position: sticky;
+      top: 44px;
+      z-index: 10;
+    }
+    .tab {
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b778c;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+    }
+    .tab.active {
+      color: #0052cc;
+      border-bottom-color: #0052cc;
+    }
+    .tab:hover:not(.active) { color: #172b4d; }
+
+    /* ── Content ─────────────────────────────────────── */
+    .content { padding: 16px 20px; }
+
+    .section {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 10px 16px;
+      background: #f4f5f7;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: #6b778c;
+    }
+    .section-body { padding: 14px 16px; }
+
+    /* ── Field Grid ──────────────────────────────────── */
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+    }
+    .field-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+    .field-grid.one   { grid-template-columns: 1fr; }
+    .field { }
+    .field-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #6b778c;
+      margin-bottom: 3px;
+    }
+    .field-value {
+      font-size: 12px;
+      color: #172b4d;
+      line-height: 1.5;
+    }
+    .field-value.mono {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      background: #f4f5f7;
+      padding: 8px 10px;
+      border-radius: 4px;
+      line-height: 1.6;
+    }
+    .field-value.locked {
+      color: #ae1400;
+      font-weight: 600;
+    }
+
+    /* ── INCI ────────────────────────────────────────── */
+    .inci-box {
+      background: #f4f5f7;
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      line-height: 1.7;
+      color: #172b4d;
+      word-break: break-word;
+    }
+    .inci-highlight { color: #0052cc; font-weight: 700; }
+
+    /* ── Approval Chain ──────────────────────────────── */
+    .approval-chain { display: flex; flex-direction: column; gap: 10px; }
+    .approval-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .approval-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .icon-done   { background: #e3fcef; }
+    .icon-active { background: #e8f0fe; }
+    .icon-wait   { background: #f4f5f7; }
+    .approval-info { flex: 1; }
+    .approval-name { font-size: 12px; font-weight: 600; color: #172b4d; }
+    .approval-person { font-size: 11px; color: #6b778c; }
+    .approval-date { font-size: 11px; color: #6b778c; }
+    .approval-badge {
+      font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 10px;
+    }
+    .badge-done    { background: #e3fcef; color: #006644; }
+    .badge-active  { background: #e8f0fe; color: #0052cc; }
+    .badge-waiting { background: #f4f5f7; color: #6b778c; }
+
+    /* ── Docs table ──────────────────────────────────── */
+    .doc-table { width: 100%; border-collapse: collapse; }
+    .doc-table th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #6b778c;
+      padding: 6px 10px;
+      border-bottom: 2px solid #dfe1e6;
+    }
+    .doc-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid #f4f5f7;
+      font-size: 12px;
+      color: #172b4d;
+    }
+    .doc-table tr:last-child td { border-bottom: none; }
+    .doc-link {
+      color: #0052cc;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .doc-link:hover { text-decoration: underline; }
+    .version-tag {
+      display: inline-block;
+      background: #e8f0fe;
+      color: #0052cc;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* ── Warning Banner ──────────────────────────────── */
+    .locked-banner {
+      background: #fdecea;
+      border: 1px solid #ffc6c6;
+      border-radius: 5px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: #ae1400;
+    }
+    .locked-banner strong { font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="cq-logo">C<span>Q</span></div>
+    <div class="topbar-breadcrumb">
+      <a href="#">Dokumente</a> › <a href="#">Regulatory</a> › <span id="breadcrumbName">JW-81211018</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span>Schreibgeschützt — Quelle: CQ Regulatory DMS</span>
+    <button class="btn-cq" onclick="alert('Öffnet CQ in neuem Tab')">↗ In CQ öffnen</button>
+  </div>
+</div>
+
+<!-- Doc Header -->
+<div class="doc-header">
+  <div class="doc-header-top">
+    <div>
+      <div class="doc-type-badge">Sicherheitsbewertung &amp; Regulatorische Freigabe</div>
+      <div class="doc-title" id="docTitle">Vitamin C+ Perfect Protection Fluid LSF 50</div>
+      <div class="doc-subtitle" id="docSubtitle">Artikel-Nr: JW-81211018 · Rezeptur-Version: V3.2 · CQ-ID: REG-2023-4471</div>
+    </div>
+    <div class="status-row">
+      <span class="status-pill pill-approved"><span class="status-dot"></span>Freigegeben</span>
+      <span class="status-pill pill-info">CPNP notifiziert</span>
+      <span class="status-pill pill-locked">🔒 Schreibgeschützt in PIM</span>
+    </div>
+  </div>
+  <div class="doc-meta">
+    <div class="meta-item">
+      <div class="meta-label">Freigabedatum</div>
+      <div class="meta-value">15.08.2023</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Nächste Überprüfung</div>
+      <div class="meta-value">15.08.2026</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Verantwortliche Person (GPSR)</div>
+      <div class="meta-value">Judith Williams GmbH &amp; Co. KG, Essen</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Sicherheitsbewerter</div>
+      <div class="meta-value">Dr. Claudia Maier, Toxicert GmbH</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">CPNP-Nummer</div>
+      <div class="meta-value">CPNP-2023-DE-881244</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">PAO</div>
+      <div class="meta-value">12M (nach Anbruch)</div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tab-row">
+  <div class="tab active" onclick="showTab('formula', this)">Rezeptur &amp; INCI</div>
+  <div class="tab" onclick="showTab('approval', this)">Freigabekette</div>
+  <div class="tab" onclick="showTab('docs', this)">Dokumente</div>
+  <div class="tab" onclick="showTab('tests', this)">Tests &amp; Studien</div>
+</div>
+
+<!-- ── TAB: Rezeptur & INCI ── -->
+<div class="content" id="tab-formula">
+
+  <div class="locked-banner">
+    🔒 <div><strong>Schreibgeschützt.</strong> Alle Werte in dieser Ansicht werden direkt aus dem CQ Regulatory DMS synchronisiert und können im PIM nicht manuell bearbeitet werden.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Rezepturdaten</span>
+      <span style="font-size:11px;color:#6b778c">Quelle: CQ · Stand: 15.08.2023</span>
+    </div>
+    <div class="section-body">
+      <div class="field-grid three">
+        <div class="field">
+          <div class="field-label">Rezeptur-Version</div>
+          <div class="field-value">V3.2 / 2023-08</div>
+        </div>
+        <div class="field">
+          <div class="field-label">pH-Wert</div>
+          <div class="field-value">5,5 ± 0,3</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Viskosität</div>
+          <div class="field-value">3.200 mPas (Brookfield)</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Dichte</div>
+          <div class="field-value">1,02 g/ml</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Konservierungssystem</div>
+          <div class="field-value">Phenoxyethanol 0,8%, Ethylhexylglycerin 0,1%</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Stabilitätstest</div>
+          <div class="field-value">36 Monate (bestanden)</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Herstellungsland</div>
+          <div class="field-value">Italien (IT)</div>
+        </div>
+        <div class="field">
+          <div class="field-label">PAO (nach Anbruch)</div>
+          <div class="field-value">12 Monate</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Lichtschutzfaktor</div>
+          <div class="field-value">SPF 50 (in-vivo bestätigt)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">INCI-Deklaration (vollständig)</span>
+      <span style="font-size:11px;color:#0052cc;font-weight:600;cursor:pointer">In CPNP-Portal prüfen ↗</span>
+    </div>
+    <div class="section-body">
+      <div class="inci-box">
+        AQUA, DIBUTYL ADIPATE, <span class="inci-highlight">DIETHYLAMINO HYDROXYBENZOYL HEXYL BENZOATE</span>, <span class="inci-highlight">ETHYLHEXYL TRIAZONE</span>, GLYCERIN, <span class="inci-highlight">BIS-ETHYLHEXYLOXYPHENOL METHOXYPHENYL TRIAZINE</span>, <span class="inci-highlight">3-O-ETHYL ASCORBIC ACID</span>, <span class="inci-highlight">DIETHYLHEXYL BUTAMIDO TRIAZONE</span>, <span class="inci-highlight">NIACINAMIDE</span>, MICROCRYSTALLINE CELLULOSE, DISODIUM CETEARYL SULFOSUCCINATE, GLYCERYL STEARATE, PENTAERYTHRITYL DISTEARATE, STEARYL ALCOHOL, <span class="inci-highlight">FERULIC ACID</span>, TOCOPHERYL ACETATE, <span class="inci-highlight">GLYCYRRHIZA GLABRA ROOT EXTRACT</span>, ARGININE, PHENYLBENZIMIDAZOLE SULFONIC ACID, ETHYLHEXYLGLYCERIN, HYDROXYACETOPHENONE, SODIUM STEAROYL GLUTAMATE, <span class="inci-highlight">VACCINIUM VITIS-IDAEA FRUIT EXTRACT</span>, PHENOXYETHANOL, CELLULOSE GUM, ACACIA SENEGAL GUM, XANTHAN GUM, SODIUM HYDROXIDE, CITRIC ACID, SODIUM BENZOATE
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:#6b778c">
+        <span style="color:#0052cc;font-weight:700">Blau markiert</span> = Funktionswirkstoffe · Gesamt: 30 INCI-Einträge · Letztes Update: 15.08.2023
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Allergene &amp; Warnhinweise</span>
+    </div>
+    <div class="section-body">
+      <div class="field-grid">
+        <div class="field">
+          <div class="field-label">Deklarationspflichtige Allergene</div>
+          <div class="field-value">Benzyl Alcohol (aus Phenoxyethanol, < 0,001%)</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Vegan / Tierversuchsfrei</div>
+          <div class="field-value">✅ Vegan · ✅ Cruelty-Free (Leaping Bunny)</div>
+        </div>
+        <div class="field one" style="grid-column:1/-1">
+          <div class="field-label">Pflichthinweise (Etikett)</div>
+          <div class="field-value mono">Nicht in die Augen. Bei Kontakt mit Augen sofort mit viel Wasser ausspülen. Von Kindern fernhalten. Nicht auf geschädigter oder entzündeter Haut anwenden.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB: Freigabekette ── -->
+<div class="content" id="tab-approval" style="display:none">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Regulatorische Freigabekette</span>
+      <span style="font-size:11px;color:#6b778c">Abgeschlossen: 15.08.2023</span>
+    </div>
+    <div class="section-body">
+      <div class="approval-chain">
+        <div class="approval-step">
+          <div class="approval-icon icon-done">✅</div>
+          <div class="approval-info">
+            <div class="approval-name">Rohstoff-Compliance Check</div>
+            <div class="approval-person">Dr. Claudia Maier · Toxicert GmbH</div>
+          </div>
+          <div class="approval-date">12.07.2023</div>
+          <span class="approval-badge badge-done">Freigegeben</span>
+        </div>
+        <div class="approval-step">
+          <div class="approval-icon icon-done">✅</div>
+          <div class="approval-info">
+            <div class="approval-name">Sicherheitsbewertung (Safety Assessment)</div>
+            <div class="approval-person">Dr. Claudia Maier · Toxicert GmbH</div>
+          </div>
+          <div class="approval-date">01.08.2023</div>
+          <span class="approval-badge badge-done">Freigegeben</span>
+        </div>
+        <div class="approval-step">
+          <div class="approval-icon icon-done">✅</div>
+          <div class="approval-info">
+            <div class="approval-name">CPNP Notifizierung (EU-Portal)</div>
+            <div class="approval-person">Regulatory Affairs · Judith Williams GmbH</div>
+          </div>
+          <div class="approval-date">10.08.2023</div>
+          <span class="approval-badge badge-done">Notifiziert · CPNP-2023-DE-881244</span>
+        </div>
+        <div class="approval-step">
+          <div class="approval-icon icon-done">✅</div>
+          <div class="approval-info">
+            <div class="approval-name">INCI-Freigabe für Marketing / Etikett</div>
+            <div class="approval-person">Innovation Team · Cura Cosmetics</div>
+          </div>
+          <div class="approval-date">15.08.2023</div>
+          <span class="approval-badge badge-done">Freigegeben</span>
+        </div>
+        <div class="approval-step">
+          <div class="approval-icon icon-done">✅</div>
+          <div class="approval-info">
+            <div class="approval-name">Freigabe für Markant / GDSN-Publikation</div>
+            <div class="approval-person">Regulatory Affairs · Judith Williams GmbH</div>
+          </div>
+          <div class="approval-date">15.08.2023</div>
+          <span class="approval-badge badge-done">Freigegeben</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB: Dokumente ── -->
+<div class="content" id="tab-docs" style="display:none">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Regulatorische Dokumente</span>
+    </div>
+    <div class="section-body" style="padding:0">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Dokument</th>
+            <th>Typ</th>
+            <th>Version</th>
+            <th>Datum</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#" class="doc-link">Safety Assessment Report — JW-81211018</a></td>
+            <td>Sicherheitsbewertung</td>
+            <td><span class="version-tag">V3.2</span></td>
+            <td>01.08.2023</td>
+            <td><span class="status-pill pill-approved" style="padding:2px 8px">Gültig</span></td>
+          </tr>
+          <tr>
+            <td><a href="#" class="doc-link">CPNP Notification Confirmation</a></td>
+            <td>CPNP Bescheid</td>
+            <td><span class="version-tag">V1.0</span></td>
+            <td>10.08.2023</td>
+            <td><span class="status-pill pill-approved" style="padding:2px 8px">Gültig</span></td>
+          </tr>
+          <tr>
+            <td><a href="#" class="doc-link">SPF 50 In-Vivo Studie (ISO 24444)</a></td>
+            <td>Wirksamkeitsstudie</td>
+            <td><span class="version-tag">V1.0</span></td>
+            <td>20.06.2023</td>
+            <td><span class="status-pill pill-approved" style="padding:2px 8px">Gültig</span></td>
+          </tr>
+          <tr>
+            <td><a href="#" class="doc-link">Stabilitätsprüfung 36 Monate</a></td>
+            <td>Stabilitätstest</td>
+            <td><span class="version-tag">V2.1</span></td>
+            <td>15.07.2023</td>
+            <td><span class="status-pill pill-approved" style="padding:2px 8px">Gültig</span></td>
+          </tr>
+          <tr>
+            <td><a href="#" class="doc-link">Mikrobiologische Qualitätsprüfung</a></td>
+            <td>Qualitätsprüfung</td>
+            <td><span class="version-tag">V1.0</span></td>
+            <td>10.07.2023</td>
+            <td><span class="status-pill pill-approved" style="padding:2px 8px">Gültig</span></td>
+          </tr>
+          <tr>
+            <td><a href="#" class="doc-link">LUCID Verpackungsregistrierung</a></td>
+            <td>Verpackungsregister</td>
+            <td><span class="version-tag">V1.0</span></td>
+            <td>01.03.2023</td>
+            <td><span class="status-pill pill-approved" style="padding:2px 8px">Gültig</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB: Tests & Studien ── -->
+<div class="content" id="tab-tests" style="display:none">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Dermakologische Tests &amp; Wirksamkeitsstudien</span>
+    </div>
+    <div class="section-body">
+      <div class="field-grid">
+        <div class="field">
+          <div class="field-label">Dermatologische Verträglichkeit</div>
+          <div class="field-value">✅ Dermatologisch getestet (n=30, 0 Reaktionen)</div>
+        </div>
+        <div class="field">
+          <div class="field-label">SPF In-Vivo (ISO 24444)</div>
+          <div class="field-value">✅ SPF 50 bestätigt · Labor: Dermatest GmbH</div>
+        </div>
+        <div class="field">
+          <div class="field-label">UVA-Schutz (PPD-Methode)</div>
+          <div class="field-value">✅ PPD ≥ 16,7 (EU-Kritische Wellenlänge: 370nm)</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Vitamin C Wirksamkeit</div>
+          <div class="field-value">✅ +28% Gleichmäßigkeit des Hauttons (4 Wochen)</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Hautzustand (klinisch)</div>
+          <div class="field-value">✅ +32% Feuchtigkeitsgehalt (TEWL-Messung)</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Verträglichkeit sensitiver Haut</div>
+          <div class="field-value">✅ Geeignet für sensible Haut (Dermatest-Siegel)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(name, el) {
+  document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).style.display = 'block';
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
