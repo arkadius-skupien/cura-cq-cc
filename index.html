@@ -319,6 +319,57 @@
       border-radius: 3px;
     }
 
+    /* ── Loading Overlay ─────────────────────────────── */
+    .load-overlay {
+      position: fixed; inset: 0;
+      background: #fff;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity .4s ease;
+    }
+    .load-overlay.fade { opacity: 0; pointer-events: none; }
+    .load-logo {
+      font-size: 28px; font-weight: 800; letter-spacing: 2px; color: #0052cc;
+    }
+    .load-logo span { color: #4c9aff; }
+    .load-bar-track {
+      width: 260px; height: 4px;
+      background: #dfe1e6; border-radius: 2px; overflow: hidden;
+    }
+    .load-bar-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #0052cc, #4c9aff);
+      border-radius: 2px;
+      transition: width .15s linear;
+    }
+    .load-status {
+      font-size: 11px; color: #6b778c;
+      min-height: 16px; text-align: center;
+    }
+
+    /* ── Live Sync Indicator ─────────────────────────── */
+    .sync-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 600; color: #006644;
+      background: #e3fcef; padding: 2px 8px; border-radius: 10px;
+    }
+    .sync-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #36b37e;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .4; transform: scale(.7); }
+    }
+
+    /* ── Animated Counter ────────────────────────────── */
+    .counter { font-variant-numeric: tabular-nums; }
+
     /* ── Warning Banner ──────────────────────────────── */
     .locked-banner {
       background: #fdecea;
@@ -337,6 +388,13 @@
 </head>
 <body>
 
+<!-- Loading Overlay -->
+<div class="load-overlay" id="loadOverlay">
+  <div class="load-logo">C<span>Q</span></div>
+  <div class="load-bar-track"><div class="load-bar-fill" id="loadBar"></div></div>
+  <div class="load-status" id="loadStatus">Verbinde mit CQ Regulatory DMS…</div>
+</div>
+
 <!-- Top Bar -->
 <div class="topbar">
   <div class="topbar-left">
@@ -346,7 +404,8 @@
     </div>
   </div>
   <div class="topbar-right">
-    <span>Schreibgeschützt — Quelle: CQ Regulatory DMS</span>
+    <span class="sync-badge"><span class="sync-dot"></span>Live — CQ Regulatory DMS</span>
+    <span id="syncTime" style="font-size:10px;color:#b3d4ff">Synchronisiert: gerade eben</span>
     <button class="btn-cq" onclick="alert('Öffnet CQ in neuem Tab')">↗ In CQ öffnen</button>
   </div>
 </div>
@@ -376,7 +435,7 @@
     </div>
     <div class="meta-item">
       <div class="meta-label">Verantwortliche Person (GPSR)</div>
-      <div class="meta-value">Judith Williams GmbH &amp; Co. KG, Essen</div>
+      <div class="meta-value">CURA Beauty GmbH, Innsbruck, Österreich</div>
     </div>
     <div class="meta-item">
       <div class="meta-label">Sicherheitsbewerter</div>
@@ -656,11 +715,124 @@
 </div>
 
 <script>
+// ── Tab switching ────────────────────────────────────────────────────────────
 function showTab(name, el) {
   document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + name).style.display = 'block';
   el.classList.add('active');
+}
+
+// ── Loading sequence ─────────────────────────────────────────────────────────
+const loadSteps = [
+  { pct: 15, msg: 'Verbinde mit CQ Regulatory DMS…' },
+  { pct: 35, msg: 'Authentifizierung läuft…' },
+  { pct: 55, msg: 'Lade Sicherheitsbewertung REG-2023-4471…' },
+  { pct: 72, msg: 'Synchronisiere INCI-Deklaration…' },
+  { pct: 88, msg: 'Lade Freigabekette und Dokumente…' },
+  { pct: 100, msg: 'Abgeschlossen.' },
+];
+
+(function runLoader() {
+  const bar    = document.getElementById('loadBar');
+  const status = document.getElementById('loadStatus');
+  const overlay = document.getElementById('loadOverlay');
+  let i = 0;
+
+  function step() {
+    if (i >= loadSteps.length) {
+      // Fade out overlay
+      setTimeout(() => {
+        overlay.classList.add('fade');
+        setTimeout(() => overlay.remove(), 450);
+        startLiveSyncClock();
+        animateCounters();
+      }, 300);
+      return;
+    }
+    const s = loadSteps[i++];
+    bar.style.width = s.pct + '%';
+    status.textContent = s.msg;
+    setTimeout(step, i === 1 ? 400 : 320);
+  }
+  setTimeout(step, 200);
+})();
+
+// ── Live sync clock ──────────────────────────────────────────────────────────
+function startLiveSyncClock() {
+  const el = document.getElementById('syncTime');
+  let seconds = 0;
+  setInterval(() => {
+    seconds++;
+    if (seconds < 60) {
+      el.textContent = `Synchronisiert: vor ${seconds}s`;
+    } else {
+      el.textContent = `Synchronisiert: vor ${Math.floor(seconds/60)}min`;
+    }
+  }, 1000);
+}
+
+// ── Animated number counters (simulate live data pull) ───────────────────────
+function animateCounters() {
+  // Briefly highlight the meta values to show they "loaded"
+  const metaValues = document.querySelectorAll('.meta-value');
+  metaValues.forEach((el, i) => {
+    setTimeout(() => {
+      el.style.transition = 'background .2s';
+      el.style.background = '#e8f0fe';
+      el.style.borderRadius = '3px';
+      el.style.padding = '0 4px';
+      setTimeout(() => {
+        el.style.background = 'transparent';
+        el.style.padding = '0';
+      }, 600);
+    }, i * 120);
+  });
+
+  // Animate the approval steps appearing one by one
+  const approvalSteps = document.querySelectorAll('.approval-step');
+  approvalSteps.forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(-10px)';
+    el.style.transition = 'opacity .3s ease, transform .3s ease';
+  });
+  // They animate in when the approval tab is opened
+  document.querySelector('[onclick*="approval"]').addEventListener('click', () => {
+    approvalSteps.forEach((el, i) => {
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateX(0)';
+      }, i * 180);
+    });
+  });
+
+  // Notification toast after 3 seconds
+  setTimeout(() => {
+    showNotification('🔄 CQ-Sync abgeschlossen — Alle 6 Dokumente aktuell', 'success');
+  }, 3200);
+}
+
+// ── Toast notifications ───────────────────────────────────────────────────────
+function showNotification(msg, type) {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed; bottom: 20px; right: 20px;
+    background: #172b4d; color: #fff;
+    padding: 10px 16px; border-radius: 6px;
+    font-size: 12px; font-weight: 500;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    border-left: 3px solid ${type === 'success' ? '#36b37e' : '#ff5630'};
+    opacity: 0; transition: opacity .3s ease;
+    z-index: 500; max-width: 340px;
+  `;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => { toast.style.opacity = '1'; });
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 400);
+  }, 4000);
 }
 </script>
 </body>
