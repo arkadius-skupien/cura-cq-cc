@@ -715,6 +715,21 @@
 </div>
 
 <script>
+// ── URL Params — read sku and productName for multi-PIM sharing ──────────────
+(function applyUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  const sku  = p.get('sku') || p.get('product_identifier') || 'JW-81211018';
+  const name = p.get('productName') || 'Vitamin C+ Perfect Protection Fluid LSF 50';
+
+  const breadcrumb = document.getElementById('breadcrumbName');
+  const docTitle   = document.getElementById('docTitle');
+  const docSub     = document.getElementById('docSubtitle');
+
+  if (breadcrumb) breadcrumb.textContent = sku;
+  if (docTitle)   docTitle.textContent   = name;
+  if (docSub)     docSub.textContent     = `Artikel-Nr: ${sku} · Rezeptur-Version: V3.2 · CQ-ID: REG-2023-4471`;
+})();
+
 // ── Tab switching ────────────────────────────────────────────────────────────
 function showTab(name, el) {
   document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
